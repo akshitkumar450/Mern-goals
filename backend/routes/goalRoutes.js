@@ -8,6 +8,10 @@ import {
   getGoal,
   updateGoal,
 } from "../controllers/goalController.js";
+import { protect } from "../middleware/auth.js";
+
+// protect the routes
+router.use(protect);
 
 router.route("/").get(getGoal).post(checkBody, createGoal);
 router.route("/:id").put(updateGoal).delete(deleteGoal);

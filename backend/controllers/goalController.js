@@ -2,8 +2,12 @@ import mongoose from "mongoose";
 import Goals from "../models/goalModel.js";
 
 export const getGoal = async (req, res) => {
+  // console.log(req.user);
   try {
-    const goals = await Goals.find();
+    // getting the logged in user goal
+    const id = req.user._id;
+    const goals = await Goals.find({ user: id });
+
     if (goals.length === 0) throw new Error("no data");
     res.status(200).json({
       status: "success",
@@ -23,7 +27,8 @@ export const createGoal = async (req, res) => {
     if (!text) {
       throw new Error("No data for to be saved");
     }
-    const dataAdded = await Goals.create({ text });
+    // adding the logged in userid while creating a goal
+    const dataAdded = await Goals.create({ user: req.user._id, text });
     res.status(201).json({
       status: "success",
       data: dataAdded,
