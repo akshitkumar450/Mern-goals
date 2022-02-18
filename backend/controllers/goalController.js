@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Goals from "../models/goalModel.js";
+import Users from "../models/userModel.js";
 
 export const getGoal = async (req, res) => {
   // console.log(req.user);
@@ -47,6 +48,20 @@ export const updateGoal = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new Error("no post with that id");
     }
+
+    const goal = await Goals.findById(id);
+    if (!goal) {
+      throw new Error("No goal found");
+    }
+
+    const user = await Users.findById(req.user._id);
+    if (!user) {
+      throw new Error("No user found");
+    }
+    // make sure only logged in user matches the goal user
+    if (goal.user.toString() !== user._id.toString()) {
+      throw new Error("you can not update this goal");
+    }
     const updatedData = await Goals.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
@@ -69,6 +84,23 @@ export const deleteGoal = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new Error("no post with that id");
     }
+
+    const goal = await Goals.findById(id);
+    // console.log(goal);
+    if (!goal) {
+      throw new Error("No goal found");
+    }
+
+    const user = await Users.findById(req.user._id);
+    if (!user) {
+      throw new Error("No user found");
+    }
+    // console.log(user);
+    // make sure only logged in user matches the goal user
+    if (goal.user.toString() !== user._id.toString()) {
+      throw new Error("you can not delete this goal");
+    }
+
     const updatedData = await Goals.findByIdAndDelete(id);
     res.status(201).json({
       status: "success",
