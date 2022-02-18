@@ -69,5 +69,11 @@ export const login = async (req, res) => {
 };
 
 export const getMe = (req, res) => {
-  res.send("getme");
+  //   console.log(req.user._id);
+  if (req.user._id) {
+    res.status(200).json({
+      status: "success",
+      user: req.user,
+    });
+  }
 };
