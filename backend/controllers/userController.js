@@ -20,9 +20,15 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
+    // generating the token
+    const token = jwt.sign({ id: registeredUser._id }, "super-secret", {
+      expiresIn: "5h",
+    });
+
     res.status(200).json({
       message: "success",
       data: registeredUser,
+      token,
     });
   } catch (err) {
     res.status(400).json({
@@ -44,9 +50,15 @@ export const login = async (req, res) => {
       throw new Error("email and password do not match");
     }
 
+    // generating the token
+    const token = jwt.sign({ id: user._id }, "super-secret", {
+      expiresIn: "5h",
+    });
+
     res.status(200).json({
       message: "success",
       data: user,
+      token,
     });
   } catch (err) {
     res.status(400).json({
