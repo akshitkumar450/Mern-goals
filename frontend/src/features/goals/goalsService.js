@@ -23,3 +23,13 @@ export const serviceGetGoals = async (token) => {
   const response = await axios.get(API_URL, config);
   return response.data;
 };
+
+export const sercviceDeleteGoal = async (id, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.delete(`${API_URL}/${id}`, config);
+  return response.data;
+};
