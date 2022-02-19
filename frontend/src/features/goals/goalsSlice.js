@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { serviceAddText } from "./goalsService";
+import { serviceAddText, serviceGetGoals } from "./goalsService";
 
 const initialState = {
   goals: [],
@@ -17,6 +17,26 @@ export const addGoal = createAsyncThunk(
       const token = thunkAPI.getState().user.user.token;
       //   we need to have token to create goal bcz they are protected routes
       const result = await serviceAddText(text, token);
+      return result;
+    } catch (err) {
+      const message =
+        (err.response && err.response.data && err.response.data.message) ||
+        err.message ||
+        err.toString();
+      // return value will be 'rejected' action.payload
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const getGoals = createAsyncThunk(
+  "goals/getGoals",
+  async (_, thunkAPI) => {
+    try {
+      // to get token from the user slice
+      const token = thunkAPI.getState().user.user.token;
+      //   we need to have token to create goal bcz they are protected routes
+      const result = await serviceGetGoals(token);
       return result;
     } catch (err) {
       const message =
@@ -52,6 +72,20 @@ const goalsSlice = createSlice({
         state.goals.push(action.payload);
       })
       .addCase(addGoal.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+
+      .addCase(getGoals.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getGoals.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.goals = action.payload;
+      })
+      .addCase(getGoals.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
