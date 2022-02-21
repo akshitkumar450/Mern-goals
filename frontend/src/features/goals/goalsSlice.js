@@ -85,6 +85,7 @@ const goalsSlice = createSlice({
       state.goals = [];
     },
   },
+  // thunk functions
   extraReducers: (builder) => {
     builder
       .addCase(addGoal.pending, (state) => {
