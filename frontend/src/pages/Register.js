@@ -47,7 +47,9 @@ function Register() {
     if (isSuccess || user) {
       navigate("/");
     }
-    dispatch(reset());
+    return () => {
+      dispatch(reset());
+    };
   }, [user, isLoading, message, isError, isSuccess, navigate, dispatch]);
 
   if (isLoading) {
